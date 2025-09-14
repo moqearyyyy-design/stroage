@@ -1,31 +1,124 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Simple Value Storage</title>
+    <title>Value Storage</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
-        input, button { padding: 10px; margin: 5px; font-size: 16px; }
-        .url-box { background: #f0f0f0; padding: 10px; margin: 10px 0; word-break: break-all; }
+        * { box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
+            max-width: 500px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            background: #f5f8ff; 
+        }
+        .container {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-top: 40px;
+        }
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 25px;
+        }
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .value-display {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #27ae60;
+            margin: 15px 0;
+        }
+        .url-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .copy-btn {
+            background: #28a745;
+            margin-top: 10px;
+        }
+        .copy-btn:hover {
+            background: #218838;
+        }
     </style>
+</head>
+<body>
+    <div class="container">
+        <h2>📡 Value Storage Controller</h2>
+        
+        <input type="number" id="valueInput" placeholder="Введите число" onkeypress="if(event.key=='Enter')setValue()">
+        <button onclick="setValue()">💾 Сохранить значение</button>
+        
+        <div class="value-display">
+            Текущее значение: <span id="currentValue">0</span>
+        </div>
+        
+        <h3>🔗 GET URL для получения:</h3>
+        <div class="url-box" id="getUrl">https://your-site.com/?value=0</div>
+        <button class="copy-btn" onclick="copyUrl()">📋 Скопировать URL</button>
+    </div>
+
     <script>
         let currentValue = 0;
-        const siteUrl = window.location.origin + window.location.pathname;
         
         function setValue() {
             const newValue = document.getElementById('valueInput').value;
             if (newValue) {
                 currentValue = newValue;
                 document.getElementById('currentValue').textContent = currentValue;
-                document.getElementById('status').textContent = `✅ Значение установлено: ${currentValue}`;
-                updateGetUrl();
+                updateUrl();
+                alert('✅ Значение сохранено: ' + currentValue);
             }
         }
         
-        function updateGetUrl() {
-            document.getElementById('getUrl').textContent = siteUrl + '?value=' + currentValue;
+        function updateUrl() {
+            const baseUrl = window.location.origin + window.location.pathname;
+            const getUrl = baseUrl + '?value=' + currentValue;
+            document.getElementById('getUrl').textContent = getUrl;
         }
         
-        // Читаем значение из URL при загрузке
+        function copyUrl() {
+            const url = document.getElementById('getUrl').textContent;
+            navigator.clipboard.writeText(url).then(() => {
+                alert('📋 URL скопирован в буфер!');
+            });
+        }
+        
+        // Загружаем значение из URL при запуске
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
             const urlValue = urlParams.get('value');
@@ -33,23 +126,8 @@
                 currentValue = urlValue;
                 document.getElementById('currentValue').textContent = currentValue;
             }
-            updateGetUrl();
+            updateUrl();
         }
     </script>
-</head>
-<body>
-    <h1>🎛️ Value Storage Controller</h1>
-    
-    <div>
-        <input type="number" id="valueInput" placeholder="Введите число">
-        <button onclick="setValue()">📥 Установить значение</button>
-    </div>
-    
-    <p id="status">Текущее значение: <span id="currentValue">0</span></p>
-    
-    <h3>🔗 GET URL для получения значения:</h3>
-    <div class="url-box" id="getUrl"></div>
-    
-    <p>📌 Просто скопируйте этот URL и используйте в любом месте!</p>
 </body>
 </html>
