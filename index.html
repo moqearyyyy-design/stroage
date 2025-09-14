@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Value Storage</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+        input, button { padding: 10px; margin: 5px; font-size: 16px; }
+        .url-box { background: #f0f0f0; padding: 10px; margin: 10px 0; word-break: break-all; }
+    </style>
+    <script>
+        let currentValue = 0;
+        const siteUrl = window.location.origin + window.location.pathname;
+        
+        function setValue() {
+            const newValue = document.getElementById('valueInput').value;
+            if (newValue) {
+                currentValue = newValue;
+                document.getElementById('currentValue').textContent = currentValue;
+                document.getElementById('status').textContent = `✅ Значение установлено: ${currentValue}`;
+                updateGetUrl();
+            }
+        }
+        
+        function updateGetUrl() {
+            document.getElementById('getUrl').textContent = siteUrl + '?value=' + currentValue;
+        }
+        
+        // Читаем значение из URL при загрузке
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlValue = urlParams.get('value');
+            if (urlValue) {
+                currentValue = urlValue;
+                document.getElementById('currentValue').textContent = currentValue;
+            }
+            updateGetUrl();
+        }
+    </script>
+</head>
+<body>
+    <h1>🎛️ Value Storage Controller</h1>
+    
+    <div>
+        <input type="number" id="valueInput" placeholder="Введите число">
+        <button onclick="setValue()">📥 Установить значение</button>
+    </div>
+    
+    <p id="status">Текущее значение: <span id="currentValue">0</span></p>
+    
+    <h3>🔗 GET URL для получения значения:</h3>
+    <div class="url-box" id="getUrl"></div>
+    
+    <p>📌 Просто скопируйте этот URL и используйте в любом месте!</p>
+</body>
+</html>
